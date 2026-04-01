@@ -4,12 +4,13 @@ local eg_cfg = {
 }
 
 -- ==== IMPORTS
--- local waywall = require("waywall")
+local waywall = require("waywall")
 local h = require("204wayt.helpers")
 
 -- ==== INITS
 local board = nil
 local M = {}
+local board_handle = nil
 
 -- ==== HELPERS
 function Clear_board()
@@ -23,9 +24,24 @@ function Clear_board()
 end
 
 function Print_board()
+    local board_text = ""
     for i = 1, 4 do
-        print(board[i][1] .. " " .. board[i][2] .. " " .. board[i][3] .. " " .. board[i][4])
+        board_text = board_text .. "\n" .. board[i][1] .. " " .. board[i][2] .. " " .. board[i][3] .. " " .. board[i][4]
     end
+
+    if board_handle then
+        board_handle:close()
+        board_handle = nil
+    end
+
+    print(board_text)
+
+    board_handle = waywall.text(board_text, {
+        x = 100,
+        y = 100,
+        size = 3,
+        color = "#000000"
+    })
 end
 
 function Random_Place()
@@ -68,13 +84,13 @@ function Start(config, cfg)
     Random_Place()
     Random_Place()
 
-    -- Print_board()
+    config.actions["U"] = function()
+        Print_board()
+    end
 end
 
 function M.setup(config, cfg)
     Start(config, cfg)
 end
-
-Start(nil, eg_cfg)
 
 return M
