@@ -1,5 +1,83 @@
 local M = {}
 
+function M.copy_board(src)
+    local out = {}
+    for i = 1, 4 do
+        out[i] = {}
+        for j = 1, 4 do
+            out[i][j] = src[i][j]
+        end
+    end
+    return out
+end
+
+function M.boards_equal(a, b)
+    for i = 1, 4 do
+        for j = 1, 4 do
+            if a[i][j] ~= b[i][j] then
+                return false
+            end
+        end
+    end
+    return true
+end
+
+function M.offset_look(look, dx, dy, color, depth)
+    if depth == nil then depth = 2 end
+    return {
+        x = look.x + dx,
+        y = look.y + dy,
+        size = look.size,
+        color = color,
+        depth = depth
+    }
+end
+
+function M.Has_legal_moves(board)
+    for i = 1, 4 do
+        for j = 1, 4 do
+            if board[i][j] == "_" then
+                return true
+            end
+
+            if j < 4 and board[i][j] == board[i][j + 1] then
+                return true
+            end
+
+            if i < 4 and board[i][j] == board[i + 1][j] then
+                return true
+            end
+        end
+    end
+
+    return false
+end
+
+function M.Movement_Actions(config, fn, cfg)
+    for _, key in pairs(cfg.keys) do
+        if config.actions[key[2]] ~= nil then
+            local func = config.actions[key[2]]
+            config.actions[key[2]] = function()
+                if GAME_ON then
+                    fn(key[1], cfg)
+                    return false
+                else
+                    func()
+                end
+            end
+        else
+            config.actions[key[2]] = function()
+                if GAME_ON then
+                    fn(key[1], cfg)
+                    return false
+                else
+                    return false
+                end
+            end
+        end
+    end
+end
+
 function M.Compress_row_left(row, board)
     local vals = {}
 
