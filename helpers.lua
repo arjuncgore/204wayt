@@ -59,7 +59,7 @@ function M.Movement_Actions(config, fn, cfg)
             local func = config.actions[key[2]]
             config.actions[key[2]] = function()
                 if GAME_ON then
-                    fn(key[1], cfg)
+                    fn(key[1], cfg, config)
                     return false
                 else
                     func()
@@ -68,7 +68,7 @@ function M.Movement_Actions(config, fn, cfg)
         else
             config.actions[key[2]] = function()
                 if GAME_ON then
-                    fn(key[1], cfg)
+                    fn(key[1], cfg, config)
                     return false
                 else
                     return false

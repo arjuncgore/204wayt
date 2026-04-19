@@ -13,7 +13,8 @@ local eg_cfg = {
         size = 4,
         color = "#220022",
         color2 = "#FFFFFF"
-    }
+    },
+    auto_restart = false,
 }
 
 -- ==== IMPORTS
@@ -95,7 +96,7 @@ function Random_Place()
     board[spot.row][spot.col] = place
 end
 
-function Move(direction, cfg)
+function Move(direction, cfg, config)
     local save_board = h.copy_board(board)
     print(direction)
     for i = 1, 4 do
@@ -134,6 +135,12 @@ function Move(direction, cfg)
                 board_handle4:close(); board_handle4 = nil
             end
             Board_text = ""
+
+            if cfg.auto_restart then
+                Start(config, cfg)
+                waywall.sleep(3000)
+                Start(config, cfg)
+            end
         end
     end
 end
