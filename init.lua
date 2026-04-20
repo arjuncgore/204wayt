@@ -14,7 +14,8 @@ local eg_cfg = {
         color = "#220022",
         color2 = "#FFFFFF"
     },
-    auto_restart = false,
+    auto_restart = true,
+    restart_timeout = 3000,
 }
 
 -- ==== IMPORTS
@@ -137,8 +138,7 @@ function Move(direction, cfg, config)
             Board_text = ""
 
             if cfg.auto_restart then
-                Start(config, cfg)
-                waywall.sleep(3000)
+                waywall.sleep(cfg.restart_timeout)
                 Start(config, cfg)
             end
         end
