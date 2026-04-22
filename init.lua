@@ -13,7 +13,10 @@ local eg_cfg = {
         size = 4,
         color = "#220022",
         color2 = "#FFFFFF"
-    }
+    },
+    auto_restart = true,
+    restart_timeout = 3000,
+    ttf_fork = false,
 }
 
 -- ==== IMPORTS
@@ -72,9 +75,11 @@ function Print_board(cfg)
     print(Board_text)
 
     board_handle1 = waywall.text(Board_text, h.offset_look(cfg.look, 0, 0, cfg.look.color))
-    board_handle2 = waywall.text(Board_text, h.offset_look(cfg.look, 2, 2, cfg.look.color))
-    board_handle3 = waywall.text(Board_text, h.offset_look(cfg.look, 4, 4, cfg.look.color2))
-    board_handle4 = waywall.text(Board_text, h.offset_look(cfg.look, 6, 6, cfg.look.color2))
+    if not cfg.ttf_fork then
+        board_handle2 = waywall.text(Board_text, h.offset_look(cfg.look, 2, 2, cfg.look.color))
+        board_handle3 = waywall.text(Board_text, h.offset_look(cfg.look, 4, 4, cfg.look.color2))
+        board_handle4 = waywall.text(Board_text, h.offset_look(cfg.look, 6, 6, cfg.look.color2))
+    end
 end
 
 function Random_Place()
@@ -95,7 +100,7 @@ function Random_Place()
     board[spot.row][spot.col] = place
 end
 
-function Move(direction, cfg)
+function Move(direction, cfg, config)
     local save_board = h.copy_board(board)
     print(direction)
     for i = 1, 4 do
@@ -116,10 +121,9 @@ function Move(direction, cfg)
 
         if not h.Has_legal_moves(board) then
             print("GAME OVER")
-            GAME_ON = false
             local game_over_text = waywall.text("\n\n\n\n\n\n\n\n\n\n         GAME OVER",
                 h.offset_look(cfg.look, 0, 0, cfg.look.color, 3))
-            waywall.sleep(3000)
+            waywall.sleep(cfg.restart_timeout)
             game_over_text:close()
             if board_handle1 then
                 board_handle1:close(); board_handle1 = nil
@@ -134,6 +138,13 @@ function Move(direction, cfg)
                 board_handle4:close(); board_handle4 = nil
             end
             Board_text = ""
+
+            if cfg.auto_restart then
+                Start(config, cfg)
+                Start(config, cfg)
+            else
+                GAME_ON = false
+            end
         end
     end
 end
