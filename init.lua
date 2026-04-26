@@ -2,10 +2,10 @@
 local eg_cfg = {
     start_key = "U",
     keys = {
-        { "u", "w" },
-        { "d", "s" },
-        { "l", "a" },
-        { "r", "d" },
+        { "up",    "w" },
+        { "down",  "s" },
+        { "left",  "a" },
+        { "right", "d" },
     },
     look = {
         x = 800,
@@ -92,25 +92,30 @@ function Random_Place()
         end
     end
 
+    if #free_spots == 0 then
+        return false
+    end
+
     local spot = free_spots[math.random(#free_spots)]
     local place = 2
     if math.random() < 0.1 then
         place = 4
     end
     board[spot.row][spot.col] = place
+    return true
 end
 
 function Move(direction, cfg, config)
     local save_board = h.copy_board(board)
     print(direction)
     for i = 1, 4 do
-        if direction == "l" then
+        if direction == "left" then
             h.Compress_row_left(i, board)
-        elseif direction == "r" then
+        elseif direction == "right" then
             h.Compress_row_right(i, board)
-        elseif direction == "u" then
+        elseif direction == "up" then
             h.Compress_col_up(i, board)
-        elseif direction == "d" then
+        elseif direction == "down" then
             h.Compress_col_down(i, board)
         end
     end
@@ -140,7 +145,7 @@ function Move(direction, cfg, config)
             Board_text = ""
 
             if cfg.auto_restart then
-                Start(config, cfg)
+                GAME_ON = false
                 Start(config, cfg)
             else
                 GAME_ON = false
@@ -185,7 +190,6 @@ function M.setup(config, cfg)
     end
 
     h.Movement_Actions(config, Move, cfg)
-    -- Move("l")
 end
 
 return M
